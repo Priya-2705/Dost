@@ -1,40 +1,43 @@
-import Link from "next/link";
+// components/PostCard.tsx
+import React from "react";
 
-export type Post = {
-  id: string;
+interface PostCardProps {
   title: string;
-  type: "markdown" | "micro";
+  excerpt: string;
+  author: string;
+  date: string;
   tags: string[];
-  reactions: {
-    clap: number;
-    idea: number;
-    mindblown: number;
-  };
-  status?: "published" | "draft" | "bookmarked";
+}
+
+const PostCard: React.FC<PostCardProps> = ({ title, excerpt, author, date, tags }) => {
+  return (
+    <div className="bg-[#FFFBDE] shadow-md hover:shadow-lg transition duration-300 rounded-xl p-6 border border-[#90D1CA]">
+      
+      {/* Title */}
+      <h2 className="text-2xl font-semibold text-[#096B68] mb-2">{title}</h2>
+
+      {/* Excerpt */}
+      <p className="text-gray-700 mb-4">{excerpt}</p>
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {tags.map((tag, index) => (
+          <span
+            key={index}
+            className="text-sm bg-[#129990] text-white px-2 py-1 rounded-full"
+          >
+            #{tag}
+          </span>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-between items-center text-sm text-gray-600">
+        <span>By <span className="font-medium text-[#096B68]">{author}</span></span>
+        <span>{date}</span>
+      </div>
+    </div>
+  );
 };
 
-export default function PostCard({ post }: { post: Post }) {
-  return (
-    <Link href={`/post/${post.id}`} className="block">
-      <div className="border p-4 rounded shadow hover:shadow-md transition cursor-pointer bg-white">
-        <div className="text-sm text-gray-500 mb-1">
-          {post.type === "micro" ? "💬 Micro Idea" : "📘 Blog Post"}
-        </div>
-        <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-        <div className="flex gap-2 mb-2 flex-wrap">
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-        <div className="flex gap-4 text-gray-600 text-sm">
-          👏 {post.reactions.clap} | 💡 {post.reactions.idea} | 🤯 {post.reactions.mindblown}
-        </div>
-      </div>
-    </Link>
-  );
-}
+export default PostCard;
