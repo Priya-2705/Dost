@@ -1,42 +1,46 @@
-// components/PostCard.tsx
-import React from "react";
+import Link from "next/link";
 
 interface PostCardProps {
+  _id?: string;
   title: string;
-  excerpt: string;
+  content: string;
   author: string;
   date: string;
   tags: string[];
+  onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ title, excerpt, author, date, tags }) => {
+const PostCard: React.FC<PostCardProps> = ({
+  _id,
+  title,
+  content,
+  author,
+  date,
+  tags,
+  onDelete,
+  onEdit,
+}) => {
   return (
-    <div className="bg-[#FFFBDE] shadow-md hover:shadow-lg transition duration-300 rounded-xl p-6 border border-[#90D1CA]">
-      
-      {/* Title */}
-      <h2 className="text-2xl font-semibold text-[#096B68] mb-2">{title}</h2>
-
-      {/* Excerpt */}
-      <p className="text-gray-700 mb-4">{excerpt}</p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="text-sm bg-[#129990] text-white px-2 py-1 rounded-full"
-          >
-            #{tag}
-          </span>
-        ))}
+    <Link href={`/post/${_id}`} className="block">
+      <div className="bg-[#FFFBDE] border border-[#90D1CA] rounded-xl p-6 shadow transition hover:shadow-md space-y-4 hover:cursor-pointer">
+        <h2 className="text-2xl font-bold text-[#096B68]">{title}</h2>
+        <p className="text-gray-700 leading-relaxed">
+          {content.length > 250 ? content.slice(0, 250) + "..." : content}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag, i) => (
+            <span key={i} className="bg-[#129990] text-white text-xs px-3 py-1 rounded-full font-medium">
+              #{tag}
+            </span>
+          ))}
+        </div>
+        <div className="flex justify-between items-center pt-2 text-sm text-gray-600 border-t border-[#90D1CA] mt-2 pt-4">
+          <span>By <span className="font-semibold text-[#096B68]">{author}</span></span>
+          <span>{date}</span>
+        </div>
       </div>
-
-      {/* Footer */}
-      <div className="flex justify-between items-center text-sm text-gray-600">
-        <span>By <span className="font-medium text-[#096B68]">{author}</span></span>
-        <span>{date}</span>
-      </div>
-    </div>
+    </Link>
   );
 };
 

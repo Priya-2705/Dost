@@ -1,102 +1,78 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import PostCard from "@/components/PostCard";
-import MicroIdeaCard from "@/components/MicroIdeaCard";
-import TagBadge from "@/components/TagBadge";
-import { useState } from "react";
-import EmojiReactionsBar from "@/components/EmojiReactionsBar";
-import MarkdownEditorStub from "@/components/MarkdownEditorStub";
+import EditPostForm from "@/components/EditPostForm";
+
+interface Post {
+  _id: string;
+  title: string;
+  content: string;
+  author: string;
+  createdAt: string;
+  tags: string[];
+}
 
 export default function HomePage() {
-  const tags = ["React", "DevOps", "Design", "Testing"];
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+
+  const fetchPosts = async () => {
+    const res = await fetch("/api/posts");
+    const data = await res.json();
+    setPosts(data);
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmed = confirm("Are you sure you want to delete this post?");
+    if (!confirmed) return;
+    const res = await fetch(`/api/posts/${id}`, { method: "DELETE" });
+    if (res.ok) fetchPosts();
+  };
+
+  const handleUpdate = async (updatedPost: Post) => {
+    const res = await fetch(`/api/posts/${updatedPost._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedPost),
+    });
+    if (res.ok) {
+      setEditingPost(null);
+      fetchPosts();
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#FFFBDE]">
-      
-      {/* Hero Section */}
-      <section className="text-center pt-10 pb-6">
-        <h1 className="text-4xl font-bold text-[#096B68] mb-2">Welcome to Dost</h1>
-        <p className="text-lg text-gray-700">
-          Dev + Post — Hybrid blogging for developers & creators.
-        </p>
-      </section>
+    <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+      <h1 className="text-3xl font-bold text-[#096B68] mb-6">Latest Posts</h1>
 
-      {/* Tag Filters */}
-      <div className="flex gap-2 flex-wrap justify-center px-4 mb-6">
-        {tags.map((tag) => (
-          <TagBadge
-            key={tag}
-            label={tag}
-            selected={tag === selectedTag}
-            onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
-          />
-        ))}
-      </div>
+      {editingPost && (
+        <EditPostForm
+          post={editingPost}
+          onCancel={() => setEditingPost(null)}
+          onSave={handleUpdate}
+        />
+      )}
 
-      {/* Long Post Example */}
-      <div className="px-4 max-w-3xl mx-auto space-y-6">
+      {posts.map((post) => (
+      <div key={post._id} className="mb-6">
         <PostCard
-          title="Getting Started with Next.js + TypeScript"
-          excerpt="Learn how to set up a powerful development environment with Next.js and TypeScript in just a few steps..."
-          author="Capstone"
-          date="June 4, 2025"
-          tags={["NextJS", "TypeScript", "Guide"]}
+          key={post._id}
+          _id={post._id}
+          title={post.title}
+          content={post.content}
+          author={post.author}
+          date={new Date(post.createdAt).toLocaleDateString()}
+          tags={post.tags}
+          onDelete={() => handleDelete(post._id)}
+          onEdit={() => setEditingPost(post)}
         />
       </div>
-
-      {/* Micro Idea Example */}
-      <div className="px-4 max-w-2xl mx-auto mt-8 space-y-6">
-        <MicroIdeaCard
-          content="What if we use AI to generate boilerplate for unit tests? Would save hours in large codebases."
-          author="Capstone"
-          date="June 4, 2025"
-          tags={["AI", "Testing", "Ideas"]}
-          wordCount={19}
-        />
-      </div>
-      <div className="max-w-xl mx-auto p-6 space-y-6">
-        <h1 className="text-3xl font-bold text-[#096B68]">Sample Post</h1>
-        <p className="text-gray-700">
-          Imagine a blogging platform that supports both long-form tutorials and quick 200-word idea posts. That’s Dost.
-        </p>
-
-        {/* Reactions */}
-        <EmojiReactionsBar />
-      </div>
-      <div className="max-w-2xl mx-auto p-6">
-        <h2 className="text-xl font-semibold text-[#096B68] mb-4">Comments</h2>
-        <CommentThread comments={sampleComments} />
-      </div>
-      <div className="max-w-3xl mx-auto p-6">
-        <h1 className="text-2xl font-bold text-[#096B68] mb-6">Write a Blog Post</h1>
-        <MarkdownEditorStub />
-      </div>
+    ))}
     </div>
   );
 }
-
-import CommentThread from "@/components/CommentThread";
-
-const sampleComments = [
-  {
-    id: 1,
-    author: "Priya",
-    content: "Great post! Here's a fix:\n```console.log('Hello Dost')```",
-    date: "June 4, 2025",
-    replies: [
-      {
-        id: 2,
-        author: "Sai",
-        content: "Thanks! #AppreciateThat",
-        date: "June 4, 2025",
-      },
-    ],
-  },
-  {
-    id: 3,
-    author: "Harshini",
-    content: "Would love a post on #MicroPosts design patterns!",
-    date: "June 4, 2025",
-  },
-];

@@ -35,6 +35,7 @@ const Navbar = () => {
           <Link href="/create">Create Post</Link>
           <Link href="/bookmarks">Bookmarks</Link>
           <Link href="/dashboard">Dashboard</Link>
+          <Link href="/faq">FAQs</Link>
           <Link
             href="/signin"
             className="bg-[#129990] text-white px-4 py-1 rounded hover:bg-[#096B68] text-sm"

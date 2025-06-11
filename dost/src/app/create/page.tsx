@@ -1,52 +1,66 @@
 "use client";
 
 import { useState } from "react";
-import MarkdownEditorStub from "@/components/MarkdownEditorStub";
-import MicroIdeaCard from "@/components/MicroIdeaCard";
 import PostCard from "@/components/PostCard";
 
 export default function CreatePage() {
-  const [postType, setPostType] = useState<"micro" | "long">("micro");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
   const [preview, setPreview] = useState(false);
+
+  const handleSubmit = async () => {
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        content,
+        author: "You", // replace with user data later
+        tags: tags.split(",").map((tag) => tag.trim()),
+      }),
+    });
+
+    if (res.ok) {
+      alert("✅ Post created!");
+      setTitle("");
+      setContent("");
+      setTags("");
+      setPreview(false);
+    } else {
+      alert("❌ Failed to create post.");
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
       <h1 className="text-2xl font-bold text-[#096B68]">Create a Post</h1>
 
-      {/* Post Type Slider */}
-      <div className="flex items-center gap-4 justify-center">
-        <span className={`text-sm font-medium ${postType === "micro" ? "text-[#096B68]" : "text-gray-400"}`}>
-          Micro Post
-        </span>
-        <div
-          className="w-16 h-8 bg-[#90D1CA] rounded-full flex items-center cursor-pointer px-1"
-          onClick={() => setPostType(postType === "micro" ? "long" : "micro")}
-        >
-          <div
-            className={`w-6 h-6 bg-white rounded-full shadow transition-transform duration-300 ${
-              postType === "long" ? "translate-x-8" : "translate-x-0"
-            }`}
-          />
-        </div>
-        <span className={`text-sm font-medium ${postType === "long" ? "text-[#096B68]" : "text-gray-400"}`}>
-          Long Post
-        </span>
-      </div>
-
-      {/* Editor Area */}
-      {!preview && (
+      {!preview ? (
         <>
-          {postType === "micro" ? (
-            <textarea
-              rows={6}
-              maxLength={200}
-              placeholder="Type your micro idea here..."
-              className="w-full border border-[#90D1CA] p-4 rounded text-gray-700"
-              onChange={() => {}}
-            />
-          ) : (
-            <MarkdownEditorStub />
-          )}
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Post Title"
+            className="w-full p-3 border border-[#90D1CA] rounded-md text-lg font-semibold text-[#096B68] placeholder-gray-400"
+          />
+
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={10}
+            placeholder="Write your post content..."
+            className="w-full border border-[#90D1CA] p-4 rounded text-gray-700 font-mono"
+          />
+
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Tags (comma separated)"
+            className="w-full p-2 border border-[#90D1CA] rounded-md text-sm text-gray-600"
+          />
 
           <button
             onClick={() => setPreview(true)}
@@ -55,29 +69,30 @@ export default function CreatePage() {
             Preview Post
           </button>
         </>
-      )}
-
-      {/* Preview Mode */}
-      {preview && (
+      ) : (
         <>
           <h2 className="text-xl font-semibold text-[#096B68]">Preview</h2>
-          {postType === "micro" ? (
-            <MicroIdeaCard
-              content="This is a sample micro idea preview!"
-              author="You"
-              date="Now"
-              tags={["#Example"]}
-              wordCount={7}
-            />
-          ) : (
-            <PostCard
-              title="Sample Long Post"
-              excerpt="This is a markdown post preview content with formatting and structure..."
-              author="You"
-              date="Now"
-              tags={["Preview", "Markdown"]}
-            />
-          )}
+          <PostCard
+            title={title}
+            content={content}
+            author="You"
+            date="Now"
+            tags={tags.split(",").map((tag) => tag.trim())}
+          />
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={handleSubmit}
+              className="bg-[#129990] text-white px-6 py-2 rounded hover:bg-[#096B68]"
+            >
+              Submit Post
+            </button>
+            <button
+              onClick={() => setPreview(false)}
+              className="text-sm text-gray-500 hover:underline"
+            >
+              Go Back to Edit
+            </button>
+          </div>
         </>
       )}
     </div>
