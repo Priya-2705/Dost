@@ -1,68 +1,65 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-interface EditPostFormProps {
-  post: {
-    _id: string;
-    title: string;
-    content: string;
-    tags: string[];
-  };
-  onCancel: () => void;
-  onSave: (updatedPost: any) => void;
-}
-
-const EditPostForm: React.FC<EditPostFormProps> = ({ post, onCancel, onSave }) => {
+export default function EditPostForm({ post }: { post: any }) {
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
-  const [tags, setTags] = useState(post.tags.join(", "));
+  const [tags, setTags] = useState(post.tags.join(', '));
+  const [isPublic, setIsPublic] = useState(post.isPublic);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await fetch(`/api/posts/${post._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        content,
+        tags: tags.split(',').map((tag: string) => tag.trim()),
+        isPublic,
+        }),
+    });
+
+    router.push('/myposts');
+  };
 
   return (
-    <div className="bg-white border border-[#90D1CA] p-6 rounded-xl shadow space-y-4">
-      <h2 className="text-xl font-bold text-[#096B68]">Edit Post</h2>
-
+    <form onSubmit={handleSubmit} className="space-y-4">
       <input
         type="text"
+        className="w-full border p-2"
+        placeholder="Post Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded"
       />
-
       <textarea
-        rows={6}
+        className="w-full border p-2 h-40"
+        placeholder="Post Content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded font-mono"
       />
-
       <input
         type="text"
+        className="w-full border p-2"
+        placeholder="Tags (comma-separated)"
         value={tags}
         onChange={(e) => setTags(e.target.value)}
-        placeholder="Comma-separated tags"
-        className="w-full p-2 border border-gray-300 rounded"
       />
-
-      <div className="flex gap-4 justify-end">
-        <button onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-        <button
-          onClick={() =>
-            onSave({
-              _id: post._id,
-              title,
-              content,
-              tags: tags.split(",").map((t) => t.trim()),
-            //   author: post.author,
-            })
-          }
-          className="px-4 py-2 bg-[#096B68] text-white rounded"
-        >
-          Save
-        </button>
-      </div>
-    </div>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
+        />
+        Public Post
+      </label>
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+        Save Changes
+      </button>
+    </form>
   );
-};
-
-export default EditPostForm;
+}

@@ -1,5 +1,5 @@
 // src/app/api/faqs/route.ts
-import { connectDB } from "@/app/lib/db";
+import { connectDB } from "@/lib/mongodb";
 import { Faq } from "@/models/Faq";
 import { NextResponse } from "next/server";
 

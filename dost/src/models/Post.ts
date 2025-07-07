@@ -1,14 +1,25 @@
-// models/Post.ts
-import mongoose, { Schema, models } from "mongoose";
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
-const PostSchema = new Schema(
-  {
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    author: { type: String, default: "Anonymous" },
-    tags: [String],
-  },
-  { timestamps: true }
-);
+export interface IPost extends Document {
+  userId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  required: true,
+},
+  title: string;
+  content: string;
+  tags: string[];
+  isPublic: boolean;
+  createdAt: Date;
+}
 
-export const Post = models.Post || mongoose.model("Post", PostSchema);
+const PostSchema = new Schema<IPost>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  tags: [{ type: String }],
+  isPublic: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export default mongoose.models.Post || mongoose.model<IPost>('Post', PostSchema);

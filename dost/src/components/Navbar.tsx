@@ -1,51 +1,62 @@
-// components/Navbar.tsx
-"use client";
+'use client';
 
-import Link from "next/link";
-import React from "react";
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
-const Navbar = () => {
+export function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+
+    checkToken(); // on mount
+
+    // ✅ Listen to login/logout events
+    window.addEventListener('login', checkToken);
+    window.addEventListener('logout', checkToken);
+
+    return () => {
+      window.removeEventListener('login', checkToken);
+      window.removeEventListener('logout', checkToken);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.dispatchEvent(new Event('logout')); // 👈 trigger logout event
+    router.push('/login');
+  };
+
+  const isHome = pathname === '/';
+
   return (
-    <header className="text-gray-600 body-font bg-white shadow-sm">
-      <div className="container mx-auto flex flex-wrap p-4 flex-col md:flex-row items-center justify-between">
-        
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center title-font font-medium text-[#096B68]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-8 h-8 bg-[#129990] text-white p-1 rounded-full"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-          </svg>
-          <span className="ml-2 text-xl font-semibold">Dost</span>
-        </Link>
+    <nav className="h-20 z-50 px-6 py-3 pt-6 fixed top-0 left-0 right-0 backdrop-blur-md bg-teal-900 text-white shadow">
 
-        {/* Nav Links */}
-        <nav className="flex gap-6 items-center text-base">
-          <Link href="/">Home</Link>
-          <Link href="/create">Create Post</Link>
-          <Link href="/bookmarks">Bookmarks</Link>
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/faq">FAQs</Link>
-          <Link
-            href="/signin"
-            className="bg-[#129990] text-white px-4 py-1 rounded hover:bg-[#096B68] text-sm"
-          >
-            Sign In
-          </Link>
-        </nav>
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <Link href="/" className="text-xl font-bold text-red-300">DOST</Link>
+        <div className="space-x-4">
+          <Link href="/" className="hover:text-teal-300 pr-10">Home</Link>
+          <Link href="/posts" className="hover:text-teal-300 pr-10">Explore</Link>
+          {isLoggedIn && (
+            <Link href="/dashboard" className="hover:text-teal-300 pr-10">Dashboard</Link>
+          )}
+          {isLoggedIn && (
+            <Link href="/myposts" className="hover:text-teal-300 pr-10">My Posts</Link>
+          )}
+
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="bg-red-100 p-2 text-blue-700 hover:text-red-600">Logout</button>
+          ) : (
+            <Link href="/login" className="bg-red-100 p-2 text-blue-700 hover:text-blue-600">Login</Link>
+          )}
+        </div>
       </div>
-    </header>
+    </nav>
   );
-};
-
-export default Navbar;
+}

@@ -1,61 +1,82 @@
-"use client";
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    dob: '',
+    email: '',
+    password: '',
+    profession: '',
+    address: '',
+  });
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const isOver18 = (dob: string) => {
+    const dobDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - dobDate.getFullYear();
+    const m = today.getMonth() - dobDate.getMonth();
+
+    return age > 18 || (age === 18 && m >= 0 && today.getDate() >= dobDate.getDate());
+    };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isOver18(form.dob)) {
+        setError('You must be at least 18 years old to register.');
+        return;
+    }
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || 'Registration failed');
+      return;
+    }
+
+    router.push('/login');
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FFFBDE] px-4">
-      <div className="max-w-md w-full bg-white border border-[#90D1CA] rounded-xl shadow p-8 space-y-6">
-        
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-center text-[#096B68]">Create a Dost Account</h2>
+    <div className="flex justify-center items-center pt-35 pb-30">
+      <form onSubmit={handleSubmit} className="bg-green-100 p-8 rounded shadow-md w-full max-w-lg">
+        <h2 className="text-2xl font-semibold mb-4 text-center">Create Account</h2>
 
-        {/* Form */}
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="mt-1 block w-full px-4 py-2 border border-[#90D1CA] rounded-md shadow-sm focus:ring-[#129990] focus:border-[#129990]"
-              required
-            />
-          </div>
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="mt-1 block w-full px-4 py-2 border border-[#90D1CA] rounded-md shadow-sm focus:ring-[#129990] focus:border-[#129990]"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              placeholder="Create a password"
-              className="mt-1 block w-full px-4 py-2 border border-[#90D1CA] rounded-md shadow-sm focus:ring-[#129990] focus:border-[#129990]"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-[#129990] text-white py-2 px-4 rounded hover:bg-[#096B68] transition"
-          >
-            Register
-          </button>
-        </form>
-
-        {/* Extra Links */}
-        <div className="text-sm text-center text-gray-500 pt-2">
-          Already have an account?{" "}
-          <a href="/signin" className="text-[#129990] hover:underline">
-            Sign In
-          </a>
+        <div className="grid grid-cols-2 gap-4">
+          <input name="firstName" placeholder="First Name" onChange={handleChange} required className="p-2 border rounded" />
+          <input name="lastName" placeholder="Last Name" onChange={handleChange} required className="p-2 border rounded" />
         </div>
-      </div>
+
+        <input name="dob" type="date" placeholder='dd-mm-yyyy' onChange={handleChange} required className="w-full mt-4 p-2 border rounded" />
+        <input name="email" type="email" placeholder="Email" onChange={handleChange} required className="w-full mt-4 p-2 border rounded" />
+        <input name="password" type="password" placeholder="Password" onChange={handleChange} required className="w-full mt-4 p-2 border rounded" />
+        <input name="profession" placeholder="Profession" onChange={handleChange} required className="w-full mt-4 p-2 border rounded" />
+        <input name="address" placeholder="Address" onChange={handleChange} required className="w-full mt-4 p-2 border rounded" />
+
+        <button type="submit" className="w-full mt-6 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+          Register
+        </button>
+        <p className="mt-4 text-sm text-center">
+          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
+        </p>
+      </form>
     </div>
   );
 }

@@ -1,78 +1,78 @@
-"use client";
+import { connectDB } from '@/lib/mongodb';
+import Sidebar from '@/components/Sidebar';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { useEffect, useState } from "react";
-import PostCard from "@/components/PostCard";
-import EditPostForm from "@/components/EditPostForm";
+export const dynamic = 'force-dynamic';
 
-interface Post {
-  _id: string;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
-  tags: string[];
-}
-
-export default function HomePage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [editingPost, setEditingPost] = useState<Post | null>(null);
-
-  const fetchPosts = async () => {
-    const res = await fetch("/api/posts");
-    const data = await res.json();
-    setPosts(data);
-  };
-
-  const handleDelete = async (id: string) => {
-    const confirmed = confirm("Are you sure you want to delete this post?");
-    if (!confirmed) return;
-    const res = await fetch(`/api/posts/${id}`, { method: "DELETE" });
-    if (res.ok) fetchPosts();
-  };
-
-  const handleUpdate = async (updatedPost: Post) => {
-    const res = await fetch(`/api/posts/${updatedPost._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedPost),
-    });
-    if (res.ok) {
-      setEditingPost(null);
-      fetchPosts();
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+export default async function HomePage() {
+  await connectDB();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
-      <h1 className="text-3xl font-bold text-[#096B68] mb-6">Latest Posts</h1>
+    <div
+      className="flex min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/uploads/dost-bg.jpg')" }}
+    >
+      <Sidebar />
 
-      {editingPost && (
-        <EditPostForm
-          post={editingPost}
-          onCancel={() => setEditingPost(null)}
-          onSave={handleUpdate}
-        />
-      )}
+<main className="flex-1 px-8 pb-12 flex flex-col items-center pt-16 backdrop-blur-sm bg-white/70">
+        {/* Hero Section */}
+        <section className="max-w-4xl text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-blue-700 mb-4">
+            Welcome to Dost <span className="inline-block animate-bounce">👋</span>
+          </h1>
+          <p className="text-gray-700 text-lg md:text-xl">
+            A space where developers connect, share knowledge, and grow together. Start sharing your ideas today.
+          </p>
+          <div className="mt-6 flex justify-center gap-4">
+            <Link href="/create">
+              <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                ✍ Start Writing
+              </button>
+            </Link>
+            <Link href="/posts">
+              <button className="border border-blue-600 text-blue-600 px-6 py-2 rounded hover:bg-blue-50 transition">
+                🔍 Explore Posts
+              </button>
+            </Link>
+          </div>
+        </section>
 
-      {posts.map((post) => (
-      <div key={post._id} className="mb-6">
-        <PostCard
-          key={post._id}
-          _id={post._id}
-          title={post.title}
-          content={post.content}
-          author={post.author}
-          date={new Date(post.createdAt).toLocaleDateString()}
-          tags={post.tags}
-          onDelete={() => handleDelete(post._id)}
-          onEdit={() => setEditingPost(post)}
-        />
-      </div>
-    ))}
+        {/* Hero Illustration */}
+        <section className="w-full max-w-4xl mb-10">
+          <Image
+            src="/uploads/dost-hero.png" // ✅ updated path
+            alt="Developer Community"
+            width={900}
+            height={500}
+            className="rounded-xl shadow-md object-cover mx-auto"
+          />
+        </section>
+
+        {/* Feature Highlights */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full mt-10">
+          <div className="bg-white/90 p-6 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2">💬 Share Dev Thoughts</h3>
+            <p className="text-gray-600 text-sm">
+              Express your coding journey, write tutorials, and share insights with fellow developers.
+            </p>
+          </div>
+
+          <div className="bg-white/90 p-6 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2">📚 Learn from Others</h3>
+            <p className="text-gray-600 text-sm">
+              Read posts, discover tips, and level up your knowledge through real-world experiences.
+            </p>
+          </div>
+
+          <div className="bg-white/90 p-6 rounded-xl shadow hover:shadow-lg transition">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2">🌍 Grow Your Network</h3>
+            <p className="text-gray-600 text-sm">
+              Follow creators, comment on posts, and build meaningful developer connections.
+            </p>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
