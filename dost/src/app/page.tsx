@@ -1,96 +1,89 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Sidebar from '@/components/Sidebar';
+import { Quote } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import QuoteOfTheDay from '@/components/QuoteOfTheDay';
+import LatestTags from '@/components/LatestTags';
 
-interface Post {
-  _id: string;
-  title: string;
-  content: string;
-  userId: {
-    firstName: string;
-    lastName: string;
-  };
-  tags: string[];
-  createdAt: string;
-}
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await fetch('/api/posts/explore');
-      const data = await res.json();
-      setPosts(data.posts || []);
-    };
-
-    fetchPosts();
-  }, []);
-
-  const filtered = posts.filter(post =>
-    post.title.toLowerCase().includes(search.toLowerCase()) ||
-    post.content.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const topPost = filtered[0];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#001B3A] to-[#003366] text-white">
-      {/* Top Story */}
-      {topPost && (
-        <section className="relative px-6 py-16 text-center">
-          <h2 className="text-sm uppercase tracking-wide text-sky-300 mb-3">Top Story</h2>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white max-w-4xl mx-auto">
-            {topPost.title}
-          </h1>
-          <p className="text-blue-200 mt-4 max-w-2xl mx-auto line-clamp-3">{topPost.content}</p>
-          <Link
-            href={`/posts/${topPost._id}`}
-            className="mt-6 inline-block bg-[#F3507A] px-6 py-2 rounded text-white font-semibold hover:bg-[#F0543E] transition"
+    <div className="min-h-screen bg-[#f8fafc] text-black flex">
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content + Right Column */}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Center Main Content */}
+        <main className="flex-1 px-6 py-8">
+          {/* Hero Section */}
+          <section
+            className="relative w-full min-h-[22vh] bg-cover bg-center rounded-xl overflow-hidden flex flex-col justify-center items-center text-center px-4 py-8 sm:py-12"
+            style={{ backgroundImage: "url('/uploads/dost-bg.jpg')" }}
           >
-            Continue Reading →
-          </Link>
-        </section>
-      )}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#001B3A]/40 to-[#003366]/100 z-0" />
 
-      {/* Search */}
-      <div className="max-w-4xl mx-auto px-4 mt-10">
-        <input
-          type="text"
-          placeholder="Search posts..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg text-black focus:outline-none focus:ring-2 ring-sky-400 mb-10"
-        />
-      </div>
+            <div className="relative z-10 max-w-2xl w-full animate-fade-in-up">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow-md">
+                Your ideas belong here.
+              </h1>
+              <p className="mt-2 text-sm text-sky-200">
+                Share what you know. Learn what you don’t. Build with the community.
+              </p>
 
-      {/* Post Grid */}
-      <section className="max-w-6xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
-        {filtered.slice(1).map(post => (
-          <Link href={`/posts/${post._id}`} key={post._id}>
-            <div className="bg-white text-black p-5 rounded-xl shadow hover:shadow-xl transition border border-gray-100 hover:border-sky-300">
-              <h3 className="text-lg font-bold mb-2 text-[#003366]">{post.title}</h3>
-              <p className="text-gray-600 text-sm line-clamp-3">{post.content}</p>
-              <div className="mt-3 text-xs text-gray-500">
-                By {post.userId.firstName} {post.userId.lastName} — {new Date(post.createdAt).toLocaleDateString()}
+              {/* Search Bar */}
+              <div className="mt-4 flex justify-center">
+                <input
+                  type="text"
+                  placeholder="Search posts, people, tags..."
+                  className="w-full max-w-md px-4 py-2 rounded-lg bg-white/90 text-gray-800 placeholder-gray-500 shadow focus:outline-none focus:ring-2 focus:ring-skyBlue text-sm"
+                />
               </div>
-              <div className="flex flex-wrap mt-3 gap-1">
-                {post.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+
+              {/* CTA Buttons */}
+              <div className="mt-4 flex justify-center gap-3 flex-wrap">
+                <Link href="/create">
+                  <button className="bg-[#F3507A] hover:bg-[#e6476f] text-white px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">
+                    🔥 Create Post
+                  </button>
+                </Link>
+                <Link href="/tags">
+                  <button className="bg-white text-[#003366] hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">
+                    📚 Explore Tags
+                  </button>
+                </Link>
               </div>
             </div>
-          </Link>
-        ))}
-      </section>
+          </section>
+
+          {/* Feed Placeholder */}
+          <section className="mt-10 bg-[#f9fbfd] rounded-xl p-6 shadow-sm border border-[#e2e8f0]">
+            <h2 className="text-lg font-semibold text-[#003366] mb-2">📢 What's New</h2>
+            <p className="text-gray-600">Your personalized feed will appear here soon...</p>
+          </section>
+        </main>
+
+        {/* Right Column */}
+        <aside className="hidden lg:block w-80 p-6 pt-8 space-y-6">
+          {/* 🧠 Quote of the Day */}
+          <QuoteOfTheDay />
+
+          {/* 🏷️ Latest Tags */}
+          <LatestTags />
+
+          {/* 🔥 Trending Posts */}
+          <div className="bg-[#f0f4f8] p-4 rounded-lg shadow-sm border-l-4 border-[#F0543E] text-sm">
+            <h3 className="text-[#003366] font-semibold mb-2">🔥 Trending Posts</h3>
+            <ul className="space-y-2 text-gray-700 list-disc list-inside">
+              <li><Link href="/posts/post-1" className="hover:underline">Why Tailwind is Still Underrated</Link></li>
+              <li><Link href="/posts/post-2" className="hover:underline">10x Your Dev Logs with Markdown</Link></li>
+              <li><Link href="/posts/post-3" className="hover:underline">React vs Signals — Deep Dive</Link></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

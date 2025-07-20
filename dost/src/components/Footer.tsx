@@ -34,18 +34,18 @@ export function Footer() {
 
   return (
     <footer className="bg-[#001B3A] text-white py-14 px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
+      <div className="max-w-7xl mx-auto grid gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Logo & Tagline */}
-        <div className="space-y-4 text-left">
-          <img src="/footer-logo.png" alt="Dost Logo" className="h-20 w-auto" />
-          <p className="text-sm text-gray-300 max-w-sm">
+        <div className="space-y-4 text-center md:text-left">
+          <img src="/footer-logo.png" alt="Dost Logo" className="h-16 w-auto mx-auto md:mx-0" />
+          <p className="text-sm text-gray-300 max-w-xs mx-auto md:mx-0">
             Dost is where developers, designers, and creatives come together to share, learn, and grow through ideas and code.
           </p>
         </div>
 
         {/* Navigation */}
-        <div className="text-left space-y-2">
-          <h3 className="text-lg font-semibold text-[#3AB0E2]">Navigation</h3>
+        <div className="text-center md:text-left">
+          <h3 className="text-lg font-semibold text-[#3AB0E2] mb-2">Navigation</h3>
           <ul className="space-y-1 text-sm">
             <li><a href="/" className="hover:text-[#F3507A]">Home</a></li>
             <li><a href="/posts" className="hover:text-[#F3507A]">Explore</a></li>
@@ -55,48 +55,35 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Connect / Contact */}
-        <div className="text-left space-y-2">
-          <h3 className="text-lg font-semibold text-[#3AB0E2]">Connect</h3>
-          <p className="text-sm text-gray-300 flex items-center gap-2">
-            <Mail size={16} /> hello@dost.dev
-          </p>
-          <p className="text-sm text-gray-300 flex items-center gap-2">
-            <Github size={16} /> @dost-dev
-          </p>
-          <div className="flex gap-4 mt-2">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#3AB0E2] hover:text-[#F3507A]"
-            >
+        {/* Connect */}
+        <div className="text-center md:text-left">
+          <h3 className="text-lg font-semibold text-[#3AB0E2] mb-2">Connect</h3>
+          <div className="space-y-2 text-sm text-gray-300">
+            <p className="flex justify-center md:justify-start items-center gap-2 break-all">
+              <Mail size={16} /> hello@dost.dev
+            </p>
+            <p className="flex justify-center md:justify-start items-center gap-2">
+              <Github size={16} /> @dost-dev
+            </p>
+          </div>
+          <div className="flex justify-center md:justify-start gap-4 mt-3">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#3AB0E2] hover:text-[#F3507A]">
               <Github size={20} />
             </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#3AB0E2] hover:text-[#F3507A]"
-            >
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-[#3AB0E2] hover:text-[#F3507A]">
               <Twitter size={20} />
             </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#3AB0E2] hover:text-[#F3507A]"
-            >
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[#3AB0E2] hover:text-[#F3507A]">
               <Linkedin size={20} />
             </a>
           </div>
         </div>
 
         {/* Newsletter */}
-        <div className="text-left space-y-3">
-          <h3 className="text-lg font-semibold text-[#3AB0E2]">Subscribe</h3>
-          <p className="text-sm text-gray-300">Stay up to date with new posts and features.</p>
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center gap-2">
+        <div className="text-center md:text-left">
+          <h3 className="text-lg font-semibold text-[#3AB0E2] mb-2">Subscribe</h3>
+          <p className="text-sm text-gray-300 mb-2">Stay up to date with new posts and features.</p>
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center gap-3">
             <input
               type="email"
               value={email}
@@ -107,7 +94,7 @@ export function Footer() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#F3507A] hover:bg-[#f1436e] text-white px-4 py-2 rounded"
+              className="bg-[#F3507A] hover:bg-[#f1436e] text-white px-4 py-2 rounded whitespace-nowrap"
             >
               {loading ? 'Subscribing...' : 'Subscribe'}
             </button>
