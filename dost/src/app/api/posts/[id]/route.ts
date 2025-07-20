@@ -15,3 +15,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
   return NextResponse.json({ success: true });
 }
+
+export async function GET(_: Request, { params }: { params: { id: string } }) {
+  await connectDB();
+  const post = await Post.findById(params.id);
+  if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  return NextResponse.json({ reactions: post.reactions || {} });
+}

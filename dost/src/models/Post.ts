@@ -8,6 +8,12 @@ export interface IPost extends Document {
   tags: string[];
   isPublic: boolean;
   createdAt: Date;
+  reactions: {
+    heart: number;
+    clap: number;
+    fire: number;
+    mindblown: number;
+  };
 }
 
 const PostSchema = new Schema<IPost>({
@@ -17,6 +23,12 @@ const PostSchema = new Schema<IPost>({
   tags: [{ type: String }],
   isPublic: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
+  reactions: {
+    heart: { type: Number, default: 0 },
+    clap: { type: Number, default: 0 },
+    fire: { type: Number, default: 0 },
+    mindblown: { type: Number, default: 0 },
+  },
 });
 
 export default mongoose.models.Post || mongoose.model<IPost>('Post', PostSchema);

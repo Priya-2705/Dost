@@ -6,6 +6,7 @@ import User from '@/models/User';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import ReactionsBar from '@/components/ReactionsBar';
 
 interface Props {
   params: { id: string };
@@ -14,17 +15,19 @@ interface Props {
 export default async function PostPage({ params }: Props) {
   await connectDB();
 
-  const post = (await Post.findById(params.id).lean()) as unknown as IPost;
-  if (!post || !post.isPublic) return notFound();
+  const post = await Post.findById(params.id).lean();
 
-  const user = await User.findById(post.userId).select('firstName lastName').lean();
+  if (!post || typeof post !== 'object' || !('isPublic' in post) || !post.isPublic) {
+    return notFound();
+  }
+
+  const typedPost = post as unknown as IPost;
+  const user = await User.findById(typedPost.userId).select('firstName lastName').lean();
   const authorName = user ? `${(user as any).firstName} ${(user as any).lastName}` : 'Unknown';
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-3xl mx-auto">
-        
-        {/* 🔙 Back Button */}
         <Link
           href="/posts"
           className="inline-block mb-4 text-blue-600 hover:underline text-sm"
@@ -32,9 +35,8 @@ export default async function PostPage({ params }: Props) {
           ← Back to Explore
         </Link>
 
-        {/* 📝 Post Content */}
         <div className="bg-white p-6 rounded shadow">
-          <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+          <h1 className="text-2xl font-bold mb-2">{typedPost.title}</h1>
           <p className="text-sm text-gray-500 mb-4">By {authorName}</p>
 
           <div className="prose prose-lg max-w-none">
@@ -42,12 +44,12 @@ export default async function PostPage({ params }: Props) {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeHighlight]}
             >
-              {post.content}
+              {typedPost.content}
             </ReactMarkdown>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {post.tags.map((tag: string, i: number) => (
+            {typedPost.tags.map((tag: string, i: number) => (
               <span
                 key={i}
                 className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm"
@@ -55,6 +57,14 @@ export default async function PostPage({ params }: Props) {
                 #{tag}
               </span>
             ))}
+          </div>
+
+          {/* 🧠 Reaction Bar */}
+          <div className="mt-6">
+            <ReactionsBar
+              postId={String(typedPost._id)}
+              initialReactions={typedPost.reactions}
+            />
           </div>
         </div>
       </div>
