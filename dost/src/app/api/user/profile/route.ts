@@ -1,3 +1,4 @@
+//src/app/api/user/profile/route.ts
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import jwt from 'jsonwebtoken';
