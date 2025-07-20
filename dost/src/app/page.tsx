@@ -5,6 +5,7 @@ import { Quote } from 'lucide-react';
 import Link from 'next/link';
 import QuoteOfTheDay from '@/components/QuoteOfTheDay';
 import LatestTags from '@/components/LatestTags';
+import PostFeed from '@/components/PostFeed';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,11 +59,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Feed Placeholder */}
-          <section className="mt-10 bg-[#f9fbfd] rounded-xl p-6 shadow-sm border border-[#e2e8f0]">
-            <h2 className="text-lg font-semibold text-[#003366] mb-2">📢 What's New</h2>
-            <p className="text-gray-600">Your personalized feed will appear here soon...</p>
-          </section>
+          {/* Feed */}
+          <PostFeed />
         </main>
 
         {/* Right Column */}
