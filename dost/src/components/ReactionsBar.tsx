@@ -20,6 +20,7 @@ export default function ReactionsBar({
   initialReactions: Record<ReactionType, number>;
 }) {
   const [reactions, setReactions] = useState(initialReactions);
+  const [userReaction, setUserReaction] = useState<ReactionType | null>(null);
   const [showPicker, setShowPicker] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +31,11 @@ export default function ReactionsBar({
   )[0] as ReactionType;
 
   const handleReaction = async (type: ReactionType) => {
-    setShowPicker(false);
+    if (userReaction === type) {
+      setShowPicker(false);
+      return;
+    }
+
     try {
       const res = await fetch(`/api/posts/${postId}/react`, {
         method: 'POST',
@@ -41,13 +46,15 @@ export default function ReactionsBar({
       const data = await res.json();
       if (data.reactions) {
         setReactions(data.reactions);
+        setUserReaction(data.userReaction);
       }
     } catch (error) {
-      console.error('Error adding reaction:', error);
+      console.error('Error updating reaction:', error);
     }
+
+    setShowPicker(false);
   };
 
-  // Close picker on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
@@ -86,7 +93,7 @@ export default function ReactionsBar({
         ref={pickerRef}
         onMouseEnter={() => setShowPicker(true)}
         onMouseLeave={() => setShowPicker(false)}
-        onClick={() => setShowPicker((prev) => !prev)} // also support tap
+        onClick={() => setShowPicker((prev) => !prev)}
       >
         <button className="flex items-center gap-2 px-8 py-2 bg-blue-100 rounded-full shadow-sm hover:bg-pink-200 transition">
           <img src="/icons/reaction-trigger.png" alt="React" className="w-8 h-8" />
@@ -105,7 +112,9 @@ export default function ReactionsBar({
                 <button
                   key={type}
                   onClick={() => handleReaction(type)}
-                  className="hover:scale-125 transition-transform text-2xl"
+                  className={`hover:scale-125 transition-transform text-2xl ${
+                    userReaction === type ? 'ring-2 ring-pink-500 rounded-full' : ''
+                  }`}
                   title={type}
                 >
                   {reactionEmojis[type]}

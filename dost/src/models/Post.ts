@@ -14,6 +14,9 @@ export interface IPost extends Document {
     fire: number;
     mindblown: number;
   };
+  userReactions: {
+    [userId: string]: 'heart' | 'clap' | 'fire' | 'mindblown';
+  };
 }
 
 const PostSchema = new Schema<IPost>({
@@ -28,6 +31,11 @@ const PostSchema = new Schema<IPost>({
     clap: { type: Number, default: 0 },
     fire: { type: Number, default: 0 },
     mindblown: { type: Number, default: 0 },
+  },
+  userReactions: {
+    type: Map,
+    of: String,
+    default: {},
   },
 });
 
