@@ -8,51 +8,55 @@ Dost is a full-stack **Next.js** and **TypeScript** blogging platform that blend
 
 The platform is designed for developers, designers, and creators to:
 
-- Share detailed tutorials or quick 200-word thoughts  
-- Discover content via tags and search  
-- React, bookmark, and comment on posts  
-- Switch between public and private post visibility  
-- Enable superadmins to manage users and monitor platform activity
+- Share detailed tutorials or quick 200-word micro-posts  
+- Discover content via tags, full-text search, and filters  
+- React to, bookmark, and comment on posts (with code support)  
+- Toggle post visibility (public/private)  
+- Export posts for offline use  
+- Superadmins can manage users, tags, FAQs, and contact messages
 
 ---
 
-## ✅ Completed Features (as of now)
+## ✅ Completed Features
 
-- 🔐 **Authentication** with roles: `user` and `superadmin`
-- 🧑‍💻 **User Dashboard**: Edit profile with avatar upload
-- 📊 **Superadmin Dashboard**: View total users, comments, tags + CRUD on users
-- 📝 **Post Creation**: Markdown editor for long-form posts
-- 🔍 **Explore Page (`/posts`)**: Search and view all public posts
-- 📄 **Individual Post Page**: Markdown rendering with author and tags
-- 📚 **FAQ Page**: Displays FAQs; superadmin can manage FAQs (CRUD)
+- 🔐 **Authentication** with role-based access (`user`, `superadmin`)
+- 🧑‍💻 **User Dashboard** with avatar upload and profile editing
+- 📊 **Superadmin Dashboard** with:
+  - Total users, comments, tags
+  - Full CRUD for users
+  - Manage contact messages and FAQ section
+- 📝 **Post Creation** with Markdown editor, code blocks, and image upload
+- 💡 **Micro-Idea Posts**: 200-word mini posts for quick insights
+- 🔍 **Explore Page (`/`)**: Search and view public + followed users' posts
+- 📄 **Individual Post Page** with Markdown rendering and threaded comments
+- 🧵 **Comments and Replies** with code support and smart hashtags
+- 🔖 **Bookmarks**: Save posts to private/public collections
+- 🎉 **Emoji Reactions**: (👏 💡 🤯) per-user reaction system
+- 📁 **Post Exporting** (copy/save content)
+- 🏷️ **Tags Page** with follow/hide features
+- 👥 **Team/About Page** with dynamic team member cards for superadmin control
 
 ---
 
 ## 🧠 Tech Stack
 
-- **Next.js (App Router)**  
-- **TypeScript**  
-- **MongoDB with Mongoose**  
-- **Tailwind CSS**  
-- **JWT Auth**  
-- **React Markdown + Highlighting**
+- **Frontend**: Next.js (App Router), React, Tailwind CSS  
+- **Backend**: Node.js, TypeScript, MongoDB with Mongoose  
+- **Auth**: Custom JWT-based authentication  
+- **Editor**: Markdown (React Markdown, MDX, syntax highlighting)
 
 ---
 
-## 🚧 Upcoming Features
+## 🛠 Setup Instructions
 
-- Micro-post creation (200-word limit)  
-- Emoji reactions  
-- Bookmarks (private/public collection)  
-- Threaded comments with code highlighting  
-- Post export functionality  
+1. **Clone the Repository**
+   ```bash
+   git clone <repo-url>
+   cd dost
 
----
-
-## 🛠 Setup
-
-```bash
-git clone <repo-url>
-cd dost
-npm install
-npm run dev
+##👥 Team Contributions
+- Name	Responsibilities
+- Priya	Markdown/MDX Editor, Threaded Comments with Code + Hashtags
+- Harshini	Micro-Idea Posts, Tagging by Domain/Stack/Theme
+- Sai	Full-text Search, Public/Private Post Toggle
+- Sadhana	Bookmarks, Emoji Reactions
