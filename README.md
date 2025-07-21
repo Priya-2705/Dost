@@ -52,7 +52,7 @@ The platform is designed for developers, designers, and creators to:
 1. npm install
 2. npm run dev 
 
-##👥 Team Contributions
+## 👥 Team Contributions
 - Name	Responsibilities
 - Priya	Markdown/MDX Editor, Threaded Comments with Code + Hashtags
 - Harshini	Micro-Idea Posts, Tagging by Domain/Stack/Theme
