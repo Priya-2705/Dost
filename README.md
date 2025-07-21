@@ -49,10 +49,8 @@ The platform is designed for developers, designers, and creators to:
 
 ## 🛠 Setup Instructions
 
-1. **Clone the Repository**
-   ```bash
-   git clone <repo-url>
-   cd dost
+1. npm install
+2. npm run dev 
 
 ##👥 Team Contributions
 - Name	Responsibilities
