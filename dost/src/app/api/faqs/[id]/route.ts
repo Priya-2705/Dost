@@ -3,7 +3,13 @@ import { connectDB } from "@/lib/mongodb";
 import { Faq } from "@/models/Faq";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
+
+export async function PUT(req: NextRequest, context: RouteContext) {
   await connectDB();
   const { question, answer } = await req.json();
 
@@ -16,7 +22,7 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
   return NextResponse.json(updated);
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
   await connectDB();
   await Faq.findByIdAndDelete(context.params.id);
   return NextResponse.json({ success: true });
