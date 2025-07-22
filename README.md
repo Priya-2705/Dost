@@ -4,6 +4,11 @@ Dost is a full-stack **Next.js** and **TypeScript** blogging platform that blend
 
 ---
 
+## Deployed App URL:
+https://dost27.vercel.app/
+
+---
+
 ## 📌 Project Description
 
 The platform is designed for developers, designers, and creators to:
