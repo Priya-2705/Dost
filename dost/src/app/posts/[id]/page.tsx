@@ -6,7 +6,8 @@ import User from '@/models/User';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import ReactionsBar from '@/components/ReactionsBar';
+import Image from 'next/image';
+import FollowButton from '@/components/FollowButton';
 
 interface Props {
   params: { id: string };
@@ -16,30 +17,51 @@ export default async function PostPage({ params }: Props) {
   await connectDB();
 
   const post = await Post.findById(params.id).lean();
-
   if (!post || typeof post !== 'object' || !('isPublic' in post) || !post.isPublic) {
     return notFound();
   }
 
   const typedPost = post as unknown as IPost;
-  const user = await User.findById(typedPost.userId).select('firstName lastName').lean();
-  const authorName = user ? `${(user as any).firstName} ${(user as any).lastName}` : 'Unknown';
+
+  const user = await User.findById(typedPost.userId)
+    .select('firstName lastName avatar')
+    .lean() as { firstName: string; lastName: string; avatar?: string } | null;
+
+  const authorName = user ? `${user.firstName} ${user.lastName}` : 'Unknown';
+  const authorAvatar = user?.avatar || '/default-avatar.png';
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/posts"
-          className="inline-block mb-4 text-blue-600 hover:underline text-sm"
-        >
-          ← Back to Explore
-        </Link>
+    <div className="min-h-screen bg-[#f8fafc] py-10 px-4">
+      <div className="max-w-4xl mx-auto">
 
-        <div className="bg-white p-6 rounded shadow">
-          <h1 className="text-2xl font-bold mb-2">{typedPost.title}</h1>
-          <p className="text-sm text-gray-500 mb-4">By {authorName}</p>
+        <article className="bg-white rounded-xl shadow-xl border border-gray-200 p-6 sm:p-10">
+          {/* Title */}
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#001B3A] mb-4 leading-tight">
+            {typedPost.title}
+          </h1>
 
-          <div className="prose prose-lg max-w-none">
+          {/* Author section */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <Image
+                src={authorAvatar}
+                alt="Author Avatar"
+                width={45}
+                height={45}
+                className="rounded-full object-cover border shadow-sm"
+              />
+              <div className="text-sm text-gray-600">
+                <p className="font-semibold text-[#003366]">{authorName}</p>
+                <p>{new Date(typedPost.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+            <div>
+              <FollowButton targetUserId={typedPost.userId.toString()} />
+            </div>
+          </div>
+
+          {/* Markdown content */}
+          <div className="prose prose-sky max-w-none prose-img:rounded-lg prose-pre:bg-gray-900 prose-code:text-sm prose-code:px-2 prose-code:py-1">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeHighlight]}
@@ -48,25 +70,20 @@ export default async function PostPage({ params }: Props) {
             </ReactMarkdown>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {typedPost.tags.map((tag: string, i: number) => (
-              <span
-                key={i}
-                className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-
-          {/* 🧠 Reaction Bar */}
-          <div className="mt-6">
-            <ReactionsBar
-              postId={String(typedPost._id)}
-              initialReactions={typedPost.reactions}
-            />
-          </div>
-        </div>
+          {/* Tags */}
+          {typedPost.tags.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {typedPost.tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-xs font-medium"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </article>
       </div>
     </div>
   );

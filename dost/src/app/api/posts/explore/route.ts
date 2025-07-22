@@ -1,3 +1,4 @@
+// src/app/api/posts/explore/route.ts
 import { connectDB } from '@/lib/mongodb';
 import Post from '@/models/Post';
 import User from '@/models/User';

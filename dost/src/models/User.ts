@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+// File: src/models/User.ts
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
   firstName: string;
@@ -12,6 +13,8 @@ export interface IUser extends Document {
   role: 'user' | 'superadmin';
   followedTags?: string[];
   hiddenTags?: string[];
+  following?: Types.ObjectId[];
+  followers?: Types.ObjectId[];
 }
 
 const UserSchema = new Schema<IUser>({
@@ -26,6 +29,8 @@ const UserSchema = new Schema<IUser>({
   role: { type: String, enum: ['user', 'superadmin'], default: 'user' },
   followedTags: { type: [String], default: [] },
   hiddenTags: { type: [String], default: [] },
+  following: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
+  followers: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
 });
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
