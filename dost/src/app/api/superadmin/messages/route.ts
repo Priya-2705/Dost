@@ -1,3 +1,4 @@
+// app/api/superadmin/messages/route.ts
 import { connectDB } from '@/lib/mongodb';
 import Contact from '@/models/Contact';
 import { NextRequest, NextResponse } from 'next/server';
@@ -10,8 +11,8 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   await connectDB();
-  const { id, status } = await req.json();
-  const updated = await Contact.findByIdAndUpdate(id, { status }, { new: true });
+  const { messageId, status } = await req.json();
+  const updated = await Contact.findByIdAndUpdate(messageId, { status }, { new: true });
   return NextResponse.json({ message: 'Status updated', updated });
 }
 

@@ -1,3 +1,4 @@
+// app/api/tags/latest/route.ts
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Post from '@/models/Post';

@@ -216,137 +216,132 @@ const deleteMessage = async (id: string) => {
 
   // 🚀 Superadmin Dashboard
   if (user.role === 'superadmin') {
-    return (
-      <div className="min-h-[calc(100vh-64px)] bg-gray-100 flex items-center justify-center py-10">
-        <div className="max-w-4xl w-full bg-white rounded-xl p-8 shadow space-y-6">
-          <h2 className="text-2xl font-bold text-blue-700">Superadmin Dashboard</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-blue-100 p-4 rounded-lg shadow text-center">
-              <p className="text-4xl font-bold text-blue-700">
-                {stats ? stats.userCount : '...'}
-              </p>
-              <p className="text-gray-700 mt-1">Total Users</p>
-            </div>
-
-            <div className="bg-green-100 p-4 rounded-lg shadow text-center">
-              <p className="text-4xl font-bold text-green-700">
-                {stats ? stats.commentCount : '...'}
-              </p>
-              <p className="text-gray-700 mt-1">Comments</p>
-            </div>
-
-            <div className="bg-purple-100 p-4 rounded-lg shadow text-center">
-              <p className="text-4xl font-bold text-purple-700">
-                {stats ? stats.tagCount : '...'}
-              </p>
-              <p className="text-gray-700 mt-1">Tags</p>
-            </div>
+  return (
+    <div className="min-h-[calc(100vh-64px)] bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto space-y-10 px-6">
+        {/* 📊 Stats Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="bg-blue-100 p-6 rounded-lg shadow text-center">
+            <p className="text-4xl font-bold text-blue-700">
+              {stats ? stats.userCount : '...'}
+            </p>
+            <p className="text-gray-700 mt-1">Total Users</p>
           </div>
+          <div className="bg-green-100 p-6 rounded-lg shadow text-center">
+            <p className="text-4xl font-bold text-green-700">
+              {stats ? stats.commentCount : '...'}
+            </p>
+            <p className="text-gray-700 mt-1">Comments</p>
+          </div>
+          <div className="bg-purple-100 p-6 rounded-lg shadow text-center">
+            <p className="text-4xl font-bold text-purple-700">
+              {stats ? stats.tagCount : '...'}
+            </p>
+            <p className="text-gray-700 mt-1">Tags</p>
+          </div>
+        </div>
 
-         {/* 👥 USER MANAGEMENT TABLE */}
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">User List</h3>
-            <div className="overflow-auto">
-              <table className="w-full text-left text-sm border rounded-md overflow-hidden">
-                <thead className="bg-gray-200 text-gray-700">
-                  <tr>
-                    <th className="px-4 py-2">Name</th>
-                    <th className="px-4 py-2">Email</th>
-                    <th className="px-4 py-2">Role</th>
-                    <th className="px-4 py-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="p-4 text-center text-gray-500">No users found</td>
-              </tr>
-            ) : (
-              users.map((u) => (
-                <tr key={u._id} className="border-t">
-                  <td className="p-2">{u.firstName} {u.lastName}</td>
-                  <td className="p-2">{u.email}</td>
-                  <td className="p-2">
-                    <select
-                      value={u.role}
-                      onChange={(e) => updateUserRole(u._id, e.target.value)}
-                      className="border px-2 py-1 rounded text-sm"
-                    >
-                      <option value="user">user</option>
-                      <option value="superadmin">superadmin</option>
-                    </select>
-                  </td>
-                  <td className="p-2">
-                    <button
-                      onClick={() => deleteUser(u._id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </td>
+        {/* 👥 User Management Section */}
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h3 className="text-xl font-bold mb-4 text-gray-800">👥 User Management</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border rounded-md">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Email</th>
+                  <th className="p-3 text-left">Role</th>
+                  <th className="p-3 text-left">Actions</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      {/* 📬 CONTACT MESSAGES */}
-<div className="mt-10">
-  <h3 className="text-xl font-semibold mb-4 text-gray-800">Contact Messages</h3>
-  <div className="overflow-x-auto">
-    <table className="w-full text-sm border rounded-md">
-      <thead className="bg-gray-100">
-        <tr>
-          <th className="p-2">Name</th>
-          <th className="p-2">Email</th>
-          <th className="p-2">Message</th>
-          <th className="p-2">Date</th>
-          <th className="p-2">Status</th>
-          <th className="p-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {messages.length === 0 ? (
-          <tr><td colSpan={6} className="p-4 text-center text-gray-500">No messages</td></tr>
-        ) : messages.map((msg) => (
-          <tr key={msg._id} className="border-t">
-            <td className="p-2">{msg.name}</td>
-            <td className="p-2">{msg.email}</td>
-            <td className="p-2 max-w-xs truncate">{msg.message}</td>
-            <td className="p-2 text-xs">{new Date(msg.createdAt).toLocaleDateString()}</td>
-            <td className="p-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold
-                  ${msg.status === 'Responded' ? 'bg-green-600 text-white' : 'bg-yellow-600 text-white'}`}>
-                  {msg.status}
-                </span>
-            </td>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center text-gray-500">No users found</td>
+                  </tr>
+                ) : users.map((u) => (
+                  <tr key={u._id} className="border-t">
+                    <td className="p-3">{u.firstName} {u.lastName}</td>
+                    <td className="p-3">{u.email}</td>
+                    <td className="p-3">
+                      <select
+                        value={u.role}
+                        onChange={(e) => updateUserRole(u._id, e.target.value)}
+                        className="border px-2 py-1 rounded text-sm"
+                      >
+                        <option value="user">user</option>
+                        <option value="superadmin">superadmin</option>
+                      </select>
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => deleteUser(u._id)}
+                        className="text-red-600 hover:underline text-sm"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            <td className="p-2">
-              <button
-                onClick={() => updateStatus(msg._id, msg.status === 'Responded' ? 'Pending' : 'Responded')}
-                className="text-blue-500 hover:underline mr-2"
-              >
-                Mark as {msg.status === 'Responded' ? 'Pending' : 'Responded'}
-              </button>
-              <button
-                onClick={() => deleteMessage(msg._id)}
-                className="text-red-500 hover:underline"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</div>
+        {/* 📬 Contact Messages Section */}
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h3 className="text-xl font-bold mb-4 text-gray-800">📬 Contact Messages</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border rounded-md">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">Message</th>
+                  <th className="p-3">Date</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {messages.length === 0 ? (
+                  <tr><td colSpan={6} className="p-4 text-center text-gray-500">No messages</td></tr>
+                ) : messages.map((msg) => (
+                  <tr key={msg._id} className="border-t">
+                    <td className="p-3">{msg.name}</td>
+                    <td className="p-3">{msg.email}</td>
+                    <td className="p-3 max-w-sm whitespace-pre-wrap">{msg.message}</td>
+                    <td className="p-3 text-xs">{new Date(msg.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold
+                        ${msg.status === 'Responded' ? 'bg-green-600 text-white' : 'bg-yellow-600 text-white'}`}>
+                        {msg.status}
+                      </span>
+                    </td>
+                    <td className="p-3 space-x-2">
+                      <button
+                        onClick={() => updateStatus(msg._id, msg.status === 'Responded' ? 'Pending' : 'Responded')}
+                        className="text-blue-600 hover:underline text-sm"
+                      >
+                        Mark as {msg.status === 'Responded' ? 'Pending' : 'Responded'}
+                      </button>
+                      <button
+                        onClick={() => deleteMessage(msg._id)}
+                        className="text-red-500 hover:underline text-sm"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-      </div>
-    );
-  }
-
+  );
+}
   // 👤 Normal User Dashboard
   return (
     <div className="bg-gray-50 min-h-[calc(100vh-64px)] py-10 flex justify-center">

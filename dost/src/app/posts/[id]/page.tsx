@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import Image from 'next/image';
 import FollowButton from '@/components/FollowButton';
+import CommentSectionWrapper from '@/components/CommentSectionWrapper';
 
 interface Props {
   params: { id: string };
@@ -46,9 +47,9 @@ export default async function PostPage({ params }: Props) {
               <Image
                 src={authorAvatar}
                 alt="Author Avatar"
-                width={45}
-                height={45}
-                className="rounded-full object-cover border shadow-sm"
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-md"
               />
               <div className="text-sm text-gray-600">
                 <p className="font-semibold text-[#003366]">{authorName}</p>
@@ -61,7 +62,7 @@ export default async function PostPage({ params }: Props) {
           </div>
 
           {/* Markdown content */}
-          <div className="prose prose-sky max-w-none prose-img:rounded-lg prose-pre:bg-gray-900 prose-code:text-sm prose-code:px-2 prose-code:py-1">
+          <div className="prose prose-sky max-w-none prose-img:rounded-lg prose-pre:bg-gray-900 prose-code:text-sm prose-code:px-2 prose-code:py-1 break-words prose-pre:whitespace-pre-wrap prose-pre:break-words prose-code:break-words">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeHighlight]}
@@ -84,6 +85,11 @@ export default async function PostPage({ params }: Props) {
             </div>
           )}
         </article>
+      </div>
+
+      {/* Comment section with matching width */}
+      <div className="max-w-4xl mx-auto mt-10">
+        <CommentSectionWrapper postId={params.id} />
       </div>
     </div>
   );
